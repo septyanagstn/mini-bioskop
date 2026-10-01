@@ -1,4 +1,5 @@
 <script setup>
+import { useHead } from '@vueuse/head';
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import SiteHeader from '@/components/SiteHeader.vue';

@@ -1,13 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import WatchView from '@/views/WatchView.vue';
 import LoginView from '@/views/LoginView.vue';
 import ContentDetailView from '@/views/ContentDetailView.vue';
 import AboutView from '@/views/AboutView.vue';
 import IndexView from '@/views/IndexView.vue';
 import BrowseView from '@/views/BrowseView.vue';
-import LegalView from '@/views/LegalView.vue';
-import HelpView from '@/views/HelpView.vue';
 import NotFoundView from '@/views/404View.vue';
 import ProfileView from '@/views/ProfileView.vue';
 import SeatView from '@/views/SeatView.vue';
