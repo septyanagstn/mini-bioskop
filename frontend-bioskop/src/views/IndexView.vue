@@ -9,6 +9,7 @@ import Text from '@/components/Text.vue';
 import SiteHeader from '@/components/SiteHeader.vue';
 import SiteFooter from '@/components/SiteFooter.vue';
 import api from '@/lib/api.js';
+import { currentUser } from '@/lib/auth.js';
 
 useHead({
   title: 'CinemaKu',
@@ -44,7 +45,9 @@ async function loadMovies() {
   }
 }
 
-onMounted(loadMovies);
+onMounted(
+  loadMovies
+);
 
 </script>
 
@@ -112,12 +115,18 @@ onMounted(loadMovies);
     <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
     <div class="relative z-10 mb-8 md:mb-0 md:w-2/3">
       <h2 class="text-3xl font-bold text-white mb-4"> Choose your movie, and get your ticket. </h2>
-      <p class="text-purple-200 text-lg">
+      <p v-if="!currentUser" class="text-purple-200 text-lg"> 
          Login today and get your ticket. Experience unlimited entertainment. 
       </p>
+      <p v-else="currentUser" class="text-purple-200 text-lg"> 
+         Enjoy your day and get your ticket. Experience unlimited entertainment. 
+      </p>
     </div>
-    <div class="relative z-10">
-      <Link variant="inline" content-key="cta_39" class="inline-block bg-white text-purple-900 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors transform hover:scale-105 shadow-lg" href="login.html"> Login </Link>
+    <div v-if="!currentUser" class="relative z-10">
+      <Link variant="inline" content-key="cta_39" class="inline-block bg-white text-purple-900 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors transform hover:scale-105 shadow-lg" href="login.html"> Sign In </Link>
+    </div>
+    <div v-else="currentUser" class="relative z-10">
+      <Link variant="inline" content-key="cta_39" class="inline-block bg-white text-purple-900 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors transform hover:scale-105 shadow-lg" href="browse.html"> Order </Link>
     </div>
   </div>
 </section>

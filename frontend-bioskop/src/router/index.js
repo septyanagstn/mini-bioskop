@@ -14,12 +14,13 @@ import SeatView from '@/views/SeatView.vue';
 import OrderView from '@/views/OrderView.vue';
 import SignupView from '@/views/SignupView.vue';
 import OrderSuccessView from '@/views/OrderSuccessView.vue';
+import { restoreSession } from '@/lib/auth.js';
 
 const routes = [
   {
-    path: '/watch',
-    name: 'watch',
-    component: WatchView,
+    path: '/',
+    name: 'home',
+    component: IndexView,
   },
   {
     path: '/login',
@@ -30,6 +31,11 @@ const routes = [
     path: '/signup',
     name: 'signup',
     component: SignupView,
+  },
+  {
+    path: '/browse',
+    name: 'browse',
+    component: BrowseView,
   },
   {
     path: '/content-detail',
@@ -50,6 +56,13 @@ const routes = [
     path: '/payment-order',
     name: 'payment-order',
     component: OrderView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView,
+    meta: { requiresAuth: true },
   },
   {
     path: '/success-order',
@@ -57,39 +70,14 @@ const routes = [
     component: OrderSuccessView,
   },
   {
-    path: '/about',
-    name: 'about',
-    component: AboutView,
-  },
-  {
-    path: '/',
-    name: 'home',
-    component: IndexView,
-  },
-  {
-    path: '/browse',
-    name: 'browse',
-    component: BrowseView,
-  },
-  {
-    path: '/legal',
-    name: 'legal',
-    component: LegalView,
-  },
-  {
-    path: '/help',
-    name: 'help',
-    component: HelpView,
-  },
-  {
     path: '/404',
     name: '404',
     component: NotFoundView,
   },
   {
-    path: '/profile',
-    name: 'profile',
-    component: ProfileView,
+    path: '/about',
+    name: 'about',
+    component: AboutView,
   },
 ];
 
@@ -99,6 +87,17 @@ const router = createRouter({
   scrollBehavior() {
     return { top: 0 };
   },
+});
+
+router.beforeEach(async (to) => {
+  if (!to.meta.requiresAuth) return true;
+
+  const authenticated = await restoreSession();
+  if (!authenticated) {
+    return { name: 'login', query: { redirect: to.fullPath } };
+  }
+
+  return true;
 });
 
 export default router;

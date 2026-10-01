@@ -9,8 +9,38 @@ import { Order } from './entities/order.entity';
 export class OrdersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
+  async findAllByUserId(userId: string): Promise<Order[]> {
+    const parsedUserId = this.parseId(userId, 'user_id');
+    const orders = await this.prisma.order.findMany({
+      where: { user_id: parsedUserId },
+      include: {
+        order_seats: { select: { seat_number: true } },
+        showtime: {
+          include: { movie: { select: { id: true, title: true, poster_url: true } } },
+        },
+      },
+      orderBy: { created_at: 'desc' },
+    });
 
+    return orders.map((order) => ({
+      id: order.id.toString(),
+      user_id: order.user_id.toString(),
+      showtime_id: order.showtime_id.toString(),
+      seat_numbers: order.order_seats.map(({ seat_number }) => seat_number),
+      total_price: order.total_price,
+      status: order.status,
+      created_at: order.created_at,
+      showtime: {
+        show_date: order.showtime.show_date,
+        start_time: order.showtime.start_time,
+        audi: order.showtime.audi,
+        movie: {
+          id: order.showtime.movie.id.toString(),
+          title: order.showtime.movie.title,
+          poster_url: order.showtime.movie.poster_url,
+        },
+      },
+    }));
   }
 
   async create(createOrderDto: CreateOrderDto): Promise<Order> {

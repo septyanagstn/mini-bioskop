@@ -7,11 +7,11 @@ import Link from '@/components/Link.vue';
 import Text from '@/components/Text.vue';
 
 useHead({
-  title: 'Streamflow - Free Tailwind Template',
+  title: 'CinemaKu',
   meta: [
     {
       name: 'description',
-      content: 'Download this free Tailwind CSS Video Streaming website template for Streamflow. Features a vibrant block based design, fully responsive layout, and includes 10 pre-built pages like profile.html, help.html, legal.html.',
+      content: 'Choose your favorite movie',
     },
   ],
 });

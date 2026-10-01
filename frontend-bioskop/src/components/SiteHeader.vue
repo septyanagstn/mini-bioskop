@@ -1,13 +1,21 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import Button from '@/components/Button.vue';
 import Icon from '@/components/Icon.vue';
 import Image from '@/components/Image.vue';
 import Link from '@/components/Link.vue';
 import Text from '@/components/Text.vue';
+import { currentUser, logout } from '@/lib/auth.js';
 
 const searchQuery = defineModel('searchQuery', { type: String, default: '' });
 const mobileMenuOpen = ref(false);
+const router = useRouter();
+
+async function signOut() {
+  await logout();
+  await router.push({ name: 'login' });
+}
 </script>
 
 <template>
@@ -41,16 +49,20 @@ const mobileMenuOpen = ref(false);
                 aria-label="Search movies"
               />
             </label>
-            <div class="group relative">
+            <div v-if="currentUser" class="group relative">
               <button id="user-menu" aria-haspopup="true" class="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white">
                 <Text class="sr-only">Open user menu</Text>
                 <Image variant="cover" class="h-8 w-8 rounded-full border-2 border-purple-500 object-cover" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop" alt="User profile" />
               </button>
               <div aria-labelledby="user-menu" class="absolute right-0 mt-2 hidden w-48 origin-top-right rounded-md bg-neutral-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 group-hover:block" role="menu">
                 <Link class="block px-4 py-2 text-sm text-gray-300 hover:bg-neutral-700 hover:text-white" href="profile.html">Your Profile</Link>
-                <Link class="block px-4 py-2 text-sm text-gray-300 hover:bg-neutral-700 hover:text-white" href="login.html">Sign Out</Link>
+                <button class="block w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-neutral-700 hover:text-white" type="button" @click="signOut">Sign Out</button>
               </div>
             </div>
+          <div v-else class="flex items-center gap-3">
+            <Link class="text-sm text-gray-300 hover:text-white" href="login.html">Sign In</Link>
+            <Link class="rounded bg-purple-600 px-3 py-2 text-sm font-semibold text-white hover:bg-purple-500" href="signup.html">Sign Up</Link>
+          </div>
           </div>
 
           <Button
@@ -69,7 +81,12 @@ const mobileMenuOpen = ref(false);
       <div v-if="mobileMenuOpen" id="mobile-menu" class="border-t border-white/10 px-2 pb-3 pt-2 md:hidden">
         <Link class="block rounded-md px-3 py-2 text-base font-medium text-white" href="index.html">Home</Link>
         <Link class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:text-white" href="browse.html">Movies</Link>
-        <Link class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:text-white" href="profile.html">My List</Link>
+        <Link v-if="currentUser" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:text-white" href="profile.html">My List</Link>
+        <button v-if="currentUser" class="block w-full rounded-md px-3 py-2 text-left text-base font-medium text-gray-300 hover:text-white" type="button" @click="signOut">Sign Out</button>
+        <template v-else>
+          <Link class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:text-white" href="login.html">Sign In</Link>
+          <Link class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:text-white" href="signup.html">Sign Up</Link>
+        </template>
         <input
           v-model="searchQuery"
           class="mt-2 w-full rounded bg-neutral-800 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"

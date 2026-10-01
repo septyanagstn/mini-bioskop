@@ -4,6 +4,17 @@ import { useRoute, useRouter } from 'vue-router';
 import SiteHeader from '@/components/SiteHeader.vue';
 import SiteFooter from '@/components/SiteFooter.vue';
 import api from '@/lib/api.js';
+import { currentUser } from '@/lib/auth.js';
+
+useHead({
+  title: 'CinemaKu',
+  meta: [
+    {
+      name: 'description',
+      content: 'Choose your favorite movie',
+    },
+  ],
+});
 
 const route = useRoute();
 const router = useRouter();
@@ -29,13 +40,17 @@ const totalPrice = computed(() => (showtime.value?.price ?? 0) * selectedSeats.v
 
 async function submitOrder() {
   if (!selectedPaymentMethod.value || !selectedSeats.value.length || submittingOrder.value || completedOrder.value) return;
+  if (!currentUser.value?.user_id) {
+    await router.replace({ name: 'login', query: { redirect: route.fullPath } });
+    return;
+  }
 
   submittingOrder.value = true;
   submissionError.value = '';
   try {
     if (!pendingOrderId.value) {
       const orderResponse = await api.post('/orders', {
-        user_id: '102101438586421277',
+        user_id: currentUser.value.user_id,
         showtime_id: String(showtime.value.id),
         seat_numbers: selectedSeats.value,
       });
@@ -44,7 +59,7 @@ async function submitOrder() {
 
     const paymentResponse = await api.patch(`/orders/${encodeURIComponent(pendingOrderId.value)}`);
     completedOrder.value = paymentResponse.data;
-    await router.replace({ name: 'home' });
+    await router.replace({ name: 'success-order' });
   } catch (cause) {
     const message = cause.response?.data?.message || cause.message || 'Failed to submit order.';
     submissionError.value = Array.isArray(message) ? message.join(', ') : message;

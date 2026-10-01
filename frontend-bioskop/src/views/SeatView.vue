@@ -5,6 +5,16 @@ import SiteHeader from '@/components/SiteHeader.vue';
 import SiteFooter from '@/components/SiteFooter.vue';
 import api from '@/lib/api.js';
 
+useHead({
+  title: 'CinemaKu',
+  meta: [
+    {
+      name: 'description',
+      content: 'Choose your favorite movie',
+    },
+  ],
+});
+
 const route = useRoute();
 const router = useRouter();
 const searchQuery = ref('');

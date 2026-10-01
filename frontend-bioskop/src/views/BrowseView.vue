@@ -3,12 +3,23 @@ import { computed, onMounted, ref } from 'vue';
 import { useHead } from '@vueuse/head';
 import Link from '@/components/Link.vue';
 import api from '@/lib/api.js';
+import SiteHeader from '@/components/SiteHeader.vue';
+import SiteFooter from '@/components/SiteFooter.vue';
+
+useHead({
+  title: 'CinemaKu',
+  meta: [
+    {
+      name: 'description',
+      content: 'Choose your favorite movie',
+    },
+  ],
+});
 
 const movies = ref([]);
 const searchQuery = ref('');
 const loading = ref(false);
 const error = ref('');
-useHead({ title: 'Daftar Film | CinemaKu' });
 
 const filteredMovies = computed(() => {
   const query = searchQuery.value.trim().toLocaleLowerCase('id');
@@ -29,10 +40,14 @@ async function loadMovies() {
   }
 }
 
-onMounted(loadMovies);
+onMounted(
+    loadMovies
+);
+
 </script>
 
 <template>
+<SiteHeader/>
   <main class="min-h-screen bg-neutral-950 px-4 pb-16 pt-24 text-white sm:px-6 lg:px-8">
     <section class="mx-auto max-w-7xl">
       <div class="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -76,4 +91,5 @@ onMounted(loadMovies);
       </p>
     </section>
   </main>
+<SiteFooter/>
 </template>

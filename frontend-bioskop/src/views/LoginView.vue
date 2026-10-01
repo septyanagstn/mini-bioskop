@@ -1,11 +1,45 @@
 <script setup>
+import { ref } from 'vue';
 import { useHead } from '@vueuse/head';
+import { useRoute, useRouter } from 'vue-router';
 import Image from '@/components/Image.vue';
-import Input from '@/components/Input.vue';
 import Link from '@/components/Link.vue';
 import Text from '@/components/Text.vue';
 import SiteHeader from '@/components/SiteHeader.vue';
 import SiteFooter from '@/components/SiteFooter.vue';
+import { login } from '@/lib/auth.js';
+
+useHead({
+  title: 'CinemaKu',
+  meta: [
+    {
+      name: 'description',
+      content: 'Choose your favorite movie',
+    },
+  ],
+});
+
+const route = useRoute();
+const router = useRouter();
+const email = ref('');
+const password = ref('');
+const submitting = ref(false);
+const error = ref('');
+
+async function submitLogin() {
+  submitting.value = true;
+  error.value = '';
+  try {
+    await login({ email: email.value, password: password.value });
+    const redirect = route.query.redirect;
+    await router.replace(typeof redirect === 'string' ? redirect : { name: 'home' });
+  } catch (cause) {
+    const message = cause.response?.data?.message || cause.message || 'Sign in failed.';
+    error.value = Array.isArray(message) ? message.join(', ') : message;
+  } finally {
+    submitting.value = false;
+  }
+}
 
 useHead({
   title: 'CinemaKu',
@@ -32,14 +66,14 @@ useHead({
       <h2 class="text-2xl font-bold mt-6"> Welcome Back </h2>
       <p class="text-gray-400 mt-2"> Sign in to continue watching </p>
     </div>
-    <form class="space-y-6">
+    <form class="space-y-6" @submit.prevent="submitLogin">
       <div>
         <label class="block text-sm font-medium text-gray-300" for="email"> Email address </label>
-        <Input variant="text" class="mt-1 block w-full bg-neutral-900 border border-neutral-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" type="email" placeholder="you@example.com" id="email" />
+        <input v-model.trim="email" class="mt-1 block w-full rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-3 text-white focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500" type="email" placeholder="you@example.com" id="email" autocomplete="email" required />
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-300" for="password"> Password </label>
-        <Input variant="text" class="mt-1 block w-full bg-neutral-900 border border-neutral-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" type="password" placeholder="••••••••" id="password" />
+        <input v-model="password" class="mt-1 block w-full rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-3 text-white focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500" type="password" placeholder="••••••••" id="password" autocomplete="current-password" minlength="8" maxlength="12" required />
       </div>
       <div class="flex items-center justify-between">
         <div class="flex items-center">
@@ -50,7 +84,8 @@ useHead({
           <Link class="font-medium text-purple-400 hover:text-purple-300" href="help.html"> Forgot password? </Link>
         </div>
       </div>
-      <button class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors" type="submit"> Sign in </button>
+      <p v-if="error" class="text-sm text-red-300" role="alert">{{ error }}</p>
+      <button class="flex w-full justify-center rounded-lg border border-transparent bg-purple-600 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:cursor-wait disabled:opacity-60" type="submit" :disabled="submitting">{{ submitting ? 'Signing in...' : 'Sign in' }}</button>
     </form>
     <p class="mt-8 text-center text-sm text-gray-400">
       New to CinemaKu? 

@@ -7,6 +7,7 @@ import { OrdersModule } from './orders/orders.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { ShowtimesModule } from './showtimes/showtimes.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ShowtimesModule } from './showtimes/showtimes.module';
     MoviesModule,
     OrdersModule,
     ShowtimesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
