@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        BigInt   @id @db.UnsignedBigInt
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  role      UserRole
+  created_at DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  
+  orders    Order[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model Movie {
+  id         BigInt     @id @db.UnsignedBigInt
+  title      String     @unique @db.VarChar(255)
+  poster_url String     @db.VarChar(255)
+  director   String?    @db.VarChar(255)
+  starring   String?    @db.VarChar(255)
+  synopsis   String?    @db.Text
+  created_at DateTime   @default(now()) @db.Timestamp(0)
+  
+  showtimes Showtime[]
+
+  @@map("movies")
+}
+
+model Showtime {
+  id         BigInt    @id @db.UnsignedBigInt
+  movie_id   BigInt    @db.UnsignedBigInt
+  audi       String    @db.VarChar(50)
+  show_date  DateTime  @db.Date
+  start_time String    @db.VarChar(10)
+  price      Int
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+
+  movie     Movie   @relation(fields: [movie_id], references: [id], onDelete: Cascade)
+  orders    Order[]
+  order_seats OrderSeat[]
+
+  @@map("showtimes")
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+}
+
+model Order {
+  id           BigInt      @id @db.UnsignedBigInt
+  user_id      BigInt      @db.UnsignedBigInt
+  showtime_id  BigInt      @db.UnsignedBigInt
+  total_price  Int
+  status       OrderStatus @default(PENDING)
+  created_at   DateTime    @default(now()) @db.Timestamp(0)
+
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  showtime    Showtime @relation(fields: [showtime_id], references: [id], onDelete: Cascade)
+  order_seats OrderSeat[]
+
+  @@unique([id, showtime_id], map: "uq_orders_id_showtime")
+  @@map("orders")
+}
+
+enum SeatNumber {
+  A1
+  A2
+  A3
+  A4
+  A5
+  B1
+  B2
+  B3
+  B4
+  B5
+}
+
+model OrderSeat {
+  order_id    BigInt     @db.UnsignedBigInt
+  showtime_id BigInt     @db.UnsignedBigInt
+  seat_number SeatNumber
+
+  order    Order    @relation(fields: [order_id, showtime_id], references: [id, showtime_id], onDelete: Cascade)
+  showtime Showtime @relation(fields: [showtime_id], references: [id], onDelete: Cascade)
+
+  @@id([order_id, seat_number])
+  @@unique([showtime_id, seat_number], map: "uq_order_seats_showtime_seat")
+  @@map("order_seats")
+}
