@@ -5,7 +5,7 @@
 |------------------------------------------|------------------------------------------|------------------------------------------|
 | ![payment](./img/payment.png) | ![profile](./img/profile.png) | ![login](./img/login.png) |
 
-"CinemaKu" is a website inspired by the CGV website, which is used to order movie tickets.
+"CinemaKu" is a website inspired by the CGV website, which is used to order movie tickets. This website is designed using `SQL` database, with `Nest.js` backend, and `Vue.js` frontend.
 
 ## Run Locally
 
