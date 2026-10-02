@@ -77,10 +77,10 @@ onMounted(
     <h2 class="text-2xl font-bold text-white"> Explore Movie </h2>
     <Link class="text-sm text-purple-400 hover:text-purple-300 font-medium" href="browse.html"> View All </Link>
   </div>
-  <p v-if="loadingMovies" class="py-12 text-center text-neutral-400" role="status">Menghubungkan ke server film...</p>
+  <p v-if="loadingMovies" class="py-12 text-center text-neutral-400" role="status">Connecting to server...</p>
   <div v-else-if="movieLoadError" class="py-12 text-center text-red-300" role="alert">
     <p>{{ movieLoadError }}</p>
-    <button class="mt-3 underline underline-offset-4" type="button" @click="loadMovies">Coba lagi</button>
+    <button class="mt-3 underline underline-offset-4" type="button" @click="loadMovies">Try agin</button>
   </div>
   <div v-else-if="filteredMovies.length" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
     <Link
