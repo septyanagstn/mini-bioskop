@@ -3,7 +3,7 @@
 
 ![home](./img/home.png) | ![detail](./img/detail.png) | ![order](./img/order.png) |
 |------------------------------------------|------------------------------------------|------------------------------------------|
-| ![payment](./img/payment.png.png) | ![profile](./img/profile.png) | ![login](./img/login.png) |
+| ![payment](./img/payment.png) | ![profile](./img/profile.png) | ![login](./img/login.png) |
 
 "CinemaKu" is a website inspired by the CGV website, which is used to order movie tickets.
 
