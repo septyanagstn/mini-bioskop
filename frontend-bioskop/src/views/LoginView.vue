@@ -41,16 +41,6 @@ async function submitLogin() {
   }
 }
 
-useHead({
-  title: 'CinemaKu',
-  meta: [
-    {
-      name: 'description',
-      content: 'Choose your favorite movie',
-    },
-  ],
-});
-
 </script>
 
 <template>
